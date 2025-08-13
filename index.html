@@ -1,0 +1,108 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lipliner Store</title>
+<style>
+  body { font-family: Arial, sans-serif; max-width: 800px; margin: auto; padding: 20px; }
+  #products { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 20px; }
+  .product-card { border: 1px solid #ccc; padding: 10px; text-align: center; }
+  .product-card img { width: 100%; height: auto; }
+  .cart-button { margin-top:10px; padding:10px 15px; background:#25d366; color:white; border:none; cursor:pointer; font-size:16px; }
+  #cart ul { list-style:none; padding:0; }
+</style>
+</head>
+<body>
+
+<h2 style="text-align:center;">Lipliners - $6 each</h2>
+<div id="products"></div>
+
+<h3>Cart</h3>
+<div id="cart"></div>
+<button id="checkout" class="cart-button">Checkout via WhatsApp</button>
+
+<script>
+const whatsappNumber = "+96178783516";
+
+const products = [
+  { name: "Lipliner 04", price: 6, img: "https://lh6.googleusercontent.com/hutIJB12N9D9faJVSDfxWLv2fEijRsog2qVZmeXc37NSBPiQTKpLgdVIkSrEwGRccRX2XjCqCta4yoR6HahA7k2J712IldTCw6d0LZKdz3ULi8EEjir1YpZ7J-ql1wdLl9NtsQbAOnNv7LF0kPPDVlUPTDVAsfnbH0kl_ngCLfY9-vGkkYCqZQ=w1280" },
+  { name: "Lipliner 08", price: 6, img: "https://lh6.googleusercontent.com/MLjqAuo3XZJm_aOwypoRxvyG-vCRPnE6bC_v7kYk3OkLHzbLdebPWmOTV8ApbVdJKwrcUIB05twF8cguO5LgIH2FH9EfnM0TCSI5cXooQNn_zKP2Rdevz-3TDrCPUlDQV6-PSffgSkNoVQYNquJUtEn8H_seckEgOSXTd8x3-Uo-aHxxr017=w1280" },
+  { name: "Lipliner 11", price: 6, img: "https://lh6.googleusercontent.com/cBclKaJiqHQx73NmNSk0RiM4SHTQs9XnQ_D90ayz2ZBO9jqdt0kvZhiKjKq9Yy2Vowb0vDe2-fi3VcruzibpEchy4hFhNiYZ4kQaKyJECxzRk-PErMHCvJOjbmt1EbTXF-73CgJX2yeyLeAvV_6C_M8PTRuwHpls6Y6EJ3BgmFm6JTnRyDPvrQ=w1280" },
+  { name: "Lipliner 01", price: 6, img: "https://lh4.googleusercontent.com/PPwPGmbFCIyfJP2B5DyhYScqJqLKibPy2pwA_8KMVOHvZGLuyFERDYFI2VQeNWAcjvs2DEhUWQ0keVqMFPb0n9wwzo1afz6HdEw8GC2v-u2bzXA5pi7Q9-BDUjL_1CeXyhwvfGXjkILerpvVXE7StaqhUxItHX0iA0tuuqHxBxwBi44JGOn-hw=w1280" },
+];
+
+let cart = [];
+
+function renderProducts() {
+  const productsDiv = document.getElementById("products");
+  productsDiv.innerHTML = "";
+  products.forEach((p, index) => {
+    productsDiv.innerHTML += `
+      <div class="product-card">
+        <img src="${p.img}" alt="${p.name}">
+        <h4>${p.name}</h4>
+        <p>$${p.price}</p>
+        <div style="display:flex; justify-content:center; gap:10px; align-items:center;">
+          <button onclick="changeQty(${index}, -1)">-</button>
+          <span id="qty-${index}">0</span>
+          <button onclick="changeQty(${index}, 1)">+</button>
+        </div>
+      </div>
+    `;
+  });
+}
+
+function changeQty(index, delta) {
+  const product = products[index];
+  let cartItem = cart.find(item => item.name === product.name);
+  if (!cartItem) {
+    if (delta > 0) {
+      cart.push({ ...product, qty: 1 });
+    }
+  } else {
+    cartItem.qty += delta;
+    if (cartItem.qty <= 0) {
+      cart = cart.filter(item => item.name !== product.name);
+    }
+  }
+  document.getElementById(`qty-${index}`).innerText = cartItem ? (cartItem.qty || 0) : 0;
+  renderCart();
+}
+
+function renderCart() {
+  const cartDiv = document.getElementById("cart");
+  if (cart.length === 0) {
+    cartDiv.innerHTML = "<p>Your cart is empty.</p>";
+    return;
+  }
+  let total = 0;
+  cartDiv.innerHTML = "<ul>";
+  cart.forEach(item => {
+    total += item.price * item.qty;
+    cartDiv.innerHTML += `<li>${item.name} x ${item.qty} - $${item.price * item.qty}</li>`;
+  });
+  cartDiv.innerHTML += `</ul><p><strong>Total: $${total}</strong></p>`;
+}
+
+document.getElementById("checkout").addEventListener("click", () => {
+  if (cart.length === 0) {
+    alert("Your cart is empty!");
+    return;
+  }
+  let message = "Hello, I would like to order:\n";
+  cart.forEach(item => {
+    message += `${item.name} x ${item.qty} = $${item.price * item.qty}\n`;
+  });
+  const total = cart.reduce((sum, item) => sum + item.price * item.qty, 0);
+  message += `Total: $${total}`;
+  window.open(`https://wa.me/${whatsappNumber.replace('+','')}?text=${encodeURIComponent(message)}`, "_blank");
+});
+
+renderProducts();
+renderCart();
+</script>
+
+</body>
+</html>
