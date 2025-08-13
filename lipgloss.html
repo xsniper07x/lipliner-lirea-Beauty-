@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lipgloss Store</title>
+<style>
+  body { font-family: Arial, sans-serif; max-width: 800px; margin: auto; padding: 20px; }
+  #products { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 20px; }
+  .product-card { border: 1px solid #ccc; padding: 10px; text-align: center; }
+  .product-card img { width: 100%; height: auto; }
+  .cart-button, .goto-cart { margin-top:10px; padding:10px 15px; background:#25d366; color:white; border:none; cursor:pointer; font-size:16px; }
+  .bottom-button { text-align:center; margin-top:30px; }
+</style>
+</head>
+<body>
+
+<h2 style="text-align:center;">Lipglosses - $8 each</h2>
+<div id="products"></div>
+
+<div class="bottom-button" id="cartButtonContainer" style="display:none;">
+  <a href="cart.html" style="text-decoration:none;">
+    <button class="goto-cart">Go to Cart</button>
+  </a>
+</div>
+
+<script>
+const products = [
+  { name: "Lipgloss Lovely", price: 8, img: "https://lh4.googleusercontent.com/0Tycxl8SskQ5vKbNxaTu5JurMoIDpXmcBxdUUhtCjqnNdnGdXjJBI8_G7q8E5t2l1KKc99ilLvzsejae0AmFNmVNAoRNgMJ9EpMBSaA4yw2T-IB_GB_J1qwnQJPnPsKa3Iak4Vbxf0jRe70iC981pout7fe7s0fSwMHSkCKXk9DGvgTZLNBd4g=w1280" },
+  { name: "Lipgloss Peach Me", price: 8, img: "https://lh5.googleusercontent.com/M7luo6Cn6FpyNQOUJbIBwLdIWXIbEkX_stRuxSzAEVTT7DdCgPLluuj2b0V3Jjrobm9CP1QE5zqwk0HofEIxxp6Gh4vMcYzXOEPV3esddudQkDnGJLkiolJpuVEOOTEUuVsogWl2yycakZeQc9YGCj6DiNUEkFtoqyUdlrIrMjU3-Gyt6G0A3g=w1280" },
+  { name: "Lipgloss Rude Brown", price: 8, img: "https://lh3.googleusercontent.com/KHZV2TdArAwZIMxohST-l5xpql1GFqeojw9xjXq4E0pVvKStIGtb3sZs522uLriarEdvmbpL7KkBDICNAGjGGUHfLBGJgu2jWTHgKzKAW09k1Dv19qFZveOLflhnZwgoutsk6rIpfmeCHjNpAuFSinEb4iMDKHTLvW6AfQKdnaWyhjC_TX6oTg=w1280" },
+  { name: "Lipgloss Lolita", price: 8, img: "https://lh4.googleusercontent.com/_gvGkPD28Xq7HldI0PYEsIHl5ZL3SXrPBu9hNEB13ztk-f2IWrvFcimUT0UHT5a_wFmZHk0qdEH3SB_WN4jyhVmKDdPRe-cH_m3iHLzTAFWyOaZb_PH1JGlkU6-boObxV3FuEFkuWt7u9K05cr9l_HoLCrD37f9Bs0Wq5BOHsouwOqRSOoeRUA=w1280" },
+];
+
+let cart = JSON.parse(localStorage.getItem('cart')) || [];
+
+function renderProducts() {
+  const productsDiv = document.getElementById("products");
+  productsDiv.innerHTML = "";
+  let hasCartItems = false;
+
+  products.forEach((p, index) => {
+    let qty = cart.find(item => item.name === p.name)?.qty || 0;
+    if(qty > 0) hasCartItems = true;
+
+    productsDiv.innerHTML += `
+      <div class="product-card">
+        <img src="${p.img}" alt="${p.name}">
+        <h4>${p.name}</h4>
+        <p>$${p.price}</p>
+        <div style="display:flex; justify-content:center; gap:10px; align-items:center;">
+          <button onclick="changeQty(${index}, -1)">-</button>
+          <span id="qty-${index}">${qty}</span>
+          <button onclick="changeQty(${index}, 1)">+</button>
+        </div>
+      </div>
+    `;
+  });
+
+  document.getElementById("cartButtonContainer").style.display = hasCartItems ? "block" : "none";
+}
+
+function changeQty(index, delta) {
+  const product = products[index];
+  let cartItem = cart.find(item => item.name === product.name);
+  if (!cartItem) {
+    if (delta > 0) {
+      cart.push({ ...product, qty: 1 });
+    }
+  } else {
+    cartItem.qty += delta;
+    if (cartItem.qty <= 0) {
+      cart = cart.filter(item => item.name !== product.name);
+    }
+  }
+  localStorage.setItem('cart', JSON.stringify(cart));
+  renderProducts();
+}
+
+renderProducts();
+</script>
+
+</body>
+</html>
