@@ -1,0 +1,87 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lipliner Store</title>
+<style>
+  body { font-family: Arial, sans-serif; max-width: 800px; margin: auto; padding: 20px; }
+  #products { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 20px; }
+  .product-card { border: 1px solid #ccc; padding: 10px; text-align: center; }
+  .product-card img { width: 100%; height: auto; }
+  .quantity-controls { display:flex; justify-content:center; gap:10px; align-items:center; margin-top:5px; }
+  .go-to-cart { 
+    position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); 
+    padding: 15px 25px; background:#25d366; color:white; border:none; cursor:pointer; 
+    font-size:18px; display:none; z-index: 1000;
+  }
+</style>
+</head>
+<body>
+
+<h2 style="text-align:center;">Lipliners - $6 each</h2>
+<div id="products"></div>
+
+<button id="goCartBtn" class="go-to-cart" onclick="goToCart()">Go to Cart</button>
+
+<script>
+const products = [
+  { name: "Lipliner 04", price: 6, img: "https://lh6.googleusercontent.com/hutIJB12N9D9faJVSDfxWLv2fEijRsog2qVZmeXc37NSBPiQTKpLgdVIkSrEwGRccRX2XjCqCta4yoR6HahA7k2J712IldTCw6d0LZKdz3ULi8EEjir1YpZ7J-ql1wdLl9NtsQbAOnNv7LF0kPPDVlUPTDVAsfnbH0kl_ngCLfY9-vGkkYCqZQ=w1280" },
+  { name: "Lipliner 08", price: 6, img: "https://lh6.googleusercontent.com/MLjqAuo3XZJm_aOwypoRxvyG-vCRPnE6bC_v7kYk3OkLHzbLdebPWmOTV8ApbVdJKwrcUIB05twF8cguO5LgIH2FH9EfnM0TCSI5cXooQNn_zKP2Rdevz-3TDrCPUlDQV6-PSffgSkNoVQYNquJUtEn8H_seckEgOSXTd8x3-Uo-aHxxr017=w1280" },
+  { name: "Lipliner 11", price: 6, img: "https://lh6.googleusercontent.com/cBclKaJiqHQx73NmNSk0RiM4SHTQs9XnQ_D90ayz2ZBO9jqdt0kvZhiKjKq9Yy2Vowb0vDe2-fi3VcruzibpEchy4hFhNiYZ4kQaKyJECxzRk-PErMHCvJOjbmt1EbTXF-73CgJX2yeyLeAvV_6C_M8PTRuwHpls6Y6EJ3BgmFm6JTnRyDPvrQ=w1280" },
+  { name: "Lipliner 01", price: 6, img: "https://lh4.googleusercontent.com/PPwPGmbFCIyfJP2B5DyhYScqJqLKibPy2pwA_8KMVOHvZGLuyFERDYFI2VQeNWAcjvs2DEhUWQ0keVqMFPb0n9wwzo1afz6HdEw8GC2v-u2bzXA5pi7Q9-BDUjL_1CeXyhwvfGXjkILerpvVXE7StaqhUxItHX0iA0tuuqHxBxwBi44JGOn-hw=w1280" },
+];
+
+let cart = JSON.parse(localStorage.getItem('cart')) || [];
+
+function renderProducts() {
+  const productsDiv = document.getElementById("products");
+  productsDiv.innerHTML = "";
+  products.forEach((p, index) => {
+    let qty = cart.find(item => item.name === p.name)?.qty || 0;
+    productsDiv.innerHTML += `
+      <div class="product-card">
+        <img src="${p.img}" alt="${p.name}">
+        <h4>${p.name}</h4>
+        <p>$${p.price}</p>
+        <div class="quantity-controls">
+          <button onclick="changeQty(${index}, -1)">-</button>
+          <span id="qty-${index}">${qty}</span>
+          <button onclick="changeQty(${index}, 1)">+</button>
+        </div>
+      </div>
+    `;
+  });
+  toggleGoCart();
+}
+
+function changeQty(index, delta) {
+  const product = products[index];
+  let cartItem = cart.find(item => item.name === product.name);
+  if (!cartItem && delta > 0) {
+    cart.push({ ...product, qty: 1 });
+  } else if (cartItem) {
+    cartItem.qty += delta;
+    if (cartItem.qty <= 0) {
+      cart = cart.filter(item => item.name !== product.name);
+    }
+  }
+  localStorage.setItem('cart', JSON.stringify(cart));
+  renderProducts();
+}
+
+function toggleGoCart() {
+  const btn = document.getElementById("goCartBtn");
+  btn.style.display = cart.length > 0 ? "block" : "none";
+}
+
+function goToCart() {
+  window.location.href = "cart.html";
+}
+
+renderProducts();
+</script>
+
+</body>
+</html>
