@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -10,8 +9,12 @@
   #products { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 20px; }
   .product-card { border: 1px solid #ccc; padding: 10px; text-align: center; }
   .product-card img { width: 100%; height: auto; }
-  .cart-button { margin-top:10px; padding:10px 15px; background:#25d366; color:white; border:none; cursor:pointer; font-size:16px; }
+  .cart-button, .goto-cart { margin-top:10px; padding:10px 15px; background:#25d366; color:white; border:none; cursor:pointer; font-size:16px; }
   #cart ul { list-style:none; padding:0; }
+  #cart li { display:flex; justify-content:space-between; align-items:center; padding:5px 0; }
+  .remove-btn { display:none; background:red; color:white; border:none; cursor:pointer; padding:2px 5px; }
+  #cart li:hover .remove-btn { display:inline-block; }
+  .bottom-button { text-align:center; margin-top:30px; }
 </style>
 </head>
 <body>
@@ -21,11 +24,15 @@
 
 <h3>Cart</h3>
 <div id="cart"></div>
-<button id="checkout" class="cart-button">Checkout via WhatsApp</button>
+<button id="clearCart" class="cart-button">Clear Cart</button>
+
+<div class="bottom-button">
+  <a href="YOUR_CART_PAGE_URL" style="text-decoration:none;">
+    <button class="goto-cart">Go to Cart Page</button>
+  </a>
+</div>
 
 <script>
-const whatsappNumber = "+96178783516";
-
 const products = [
   { name: "Lipliner 04", price: 6, img: "https://lh6.googleusercontent.com/hutIJB12N9D9faJVSDfxWLv2fEijRsog2qVZmeXc37NSBPiQTKpLgdVIkSrEwGRccRX2XjCqCta4yoR6HahA7k2J712IldTCw6d0LZKdz3ULi8EEjir1YpZ7J-ql1wdLl9NtsQbAOnNv7LF0kPPDVlUPTDVAsfnbH0kl_ngCLfY9-vGkkYCqZQ=w1280" },
   { name: "Lipliner 08", price: 6, img: "https://lh6.googleusercontent.com/MLjqAuo3XZJm_aOwypoRxvyG-vCRPnE6bC_v7kYk3OkLHzbLdebPWmOTV8ApbVdJKwrcUIB05twF8cguO5LgIH2FH9EfnM0TCSI5cXooQNn_zKP2Rdevz-3TDrCPUlDQV6-PSffgSkNoVQYNquJUtEn8H_seckEgOSXTd8x3-Uo-aHxxr017=w1280" },
@@ -33,12 +40,13 @@ const products = [
   { name: "Lipliner 01", price: 6, img: "https://lh4.googleusercontent.com/PPwPGmbFCIyfJP2B5DyhYScqJqLKibPy2pwA_8KMVOHvZGLuyFERDYFI2VQeNWAcjvs2DEhUWQ0keVqMFPb0n9wwzo1afz6HdEw8GC2v-u2bzXA5pi7Q9-BDUjL_1CeXyhwvfGXjkILerpvVXE7StaqhUxItHX0iA0tuuqHxBxwBi44JGOn-hw=w1280" },
 ];
 
-let cart = [];
+let cart = JSON.parse(localStorage.getItem('cart')) || [];
 
 function renderProducts() {
   const productsDiv = document.getElementById("products");
   productsDiv.innerHTML = "";
   products.forEach((p, index) => {
+    let qty = cart.find(item => item.name === p.name)?.qty || 0;
     productsDiv.innerHTML += `
       <div class="product-card">
         <img src="${p.img}" alt="${p.name}">
@@ -46,7 +54,7 @@ function renderProducts() {
         <p>$${p.price}</p>
         <div style="display:flex; justify-content:center; gap:10px; align-items:center;">
           <button onclick="changeQty(${index}, -1)">-</button>
-          <span id="qty-${index}">0</span>
+          <span id="qty-${index}">${qty}</span>
           <button onclick="changeQty(${index}, 1)">+</button>
         </div>
       </div>
@@ -67,7 +75,15 @@ function changeQty(index, delta) {
       cart = cart.filter(item => item.name !== product.name);
     }
   }
-  document.getElementById(`qty-${index}`).innerText = cartItem ? (cartItem.qty || 0) : 0;
+  localStorage.setItem('cart', JSON.stringify(cart));
+  renderProducts();
+  renderCart();
+}
+
+function removeItem(name) {
+  cart = cart.filter(item => item.name !== name);
+  localStorage.setItem('cart', JSON.stringify(cart));
+  renderProducts();
   renderCart();
 }
 
@@ -81,28 +97,17 @@ function renderCart() {
   cartDiv.innerHTML = "<ul>";
   cart.forEach(item => {
     total += item.price * item.qty;
-    cartDiv.innerHTML += `<li>${item.name} x ${item.qty} - $${item.price * item.qty}</li>`;
+    cartDiv.innerHTML += `<li>${item.name} x ${item.qty} - $${item.price * item.qty} <button class='remove-btn' onclick='removeItem("${item.name}")'>x</button></li>`;
   });
   cartDiv.innerHTML += `</ul><p><strong>Total: $${total}</strong></p>`;
 }
 
-document.getElementById("checkout").addEventListener("click", () => {
-  if (cart.length === 0) {
-    alert("Your cart is empty!");
-    return;
-  }
-  let message = "Hello, I would like to order:\n";
-  cart.forEach(item => {
-    message += `${item.name} x ${item.qty} = $${item.price * item.qty}\n`;
-  });
-  const total = cart.reduce((sum, item) => sum + item.price * item.qty, 0);
-  message += `Total: $${total}`;
-  window.open(`https://wa.me/${whatsappNumber.replace('+','')}?text=${encodeURIComponent(message)}`, "_blank");
+document.getElementById("clearCart").addEventListener("click", () => {
+  cart = [];
+  localStorage.removeItem('cart');
+  renderProducts();
+  renderCart();
 });
 
 renderProducts();
 renderCart();
-</script>
-
-</body>
-</html>
