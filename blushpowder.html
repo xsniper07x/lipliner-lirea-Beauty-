@@ -12,11 +12,12 @@
   .product-card img { width:100%; border-radius:5px; }
   .qty-btn { background:#25d366; color:white; border:none; padding:6px 12px; border-radius:5px; margin:0 3px; cursor:pointer; }
   .qty-btn:hover { background:#1ebe57; }
-  /* Floating cart button style like lipstick page */
+  /* Floating cart button like other categories */
   .floating-cart { 
-    position: fixed; bottom: 25px; right: 25px; 
+    display:none; /* only shows when at least one item added */
+    position: fixed; bottom: 20px; right: 20px; 
     background:#ff4081; color:white; border:none; 
-    padding:14px 24px; font-size:18px; border-radius:50px; 
+    padding:14px 24px; font-size:16px; border-radius:50px; 
     cursor:pointer; box-shadow: 0 6px 12px rgba(0,0,0,0.25); 
     transition:0.2s;
   }
@@ -28,7 +29,7 @@
 <h2>Powder Blush - $10 each</h2>
 <div id="products"></div>
 
-<button class="floating-cart" onclick="goToCart()">🛒 Go to Cart</button>
+<button id="cartBtn" class="floating-cart" onclick="goToCart()">🛒 Go to Cart</button>
 
 <script>
 const products = [
@@ -41,6 +42,7 @@ let cart = JSON.parse(localStorage.getItem('cart')) || [];
 
 function renderProducts() {
   const productsDiv = document.getElementById("products");
+  let hasCartItems = cart.length > 0;
   productsDiv.innerHTML = "";
   products.forEach((p,index)=>{
     let qty = cart.find(item=>item.name===p.name)?.qty||0;
@@ -57,6 +59,7 @@ function renderProducts() {
       </div>
     `;
   });
+  document.getElementById("cartBtn").style.display = hasCartItems ? "block" : "none";
 }
 
 function changeQty(index, delta) {
@@ -73,7 +76,7 @@ function changeQty(index, delta) {
 }
 
 function goToCart(){
-  window.location.href="cart.html"; // update with your actual cart page URL if needed
+  window.location.href="cart.html"; // keep your cart page URL
 }
 
 renderProducts();
