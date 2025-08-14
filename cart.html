@@ -3,16 +3,15 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Cart - Lirea Beauty</title>
+<title>Cart</title>
 <style>
   body { font-family: Arial, sans-serif; max-width: 800px; margin: auto; padding: 20px; }
   #cart ul { list-style:none; padding:0; }
   #cart li { display:flex; justify-content:space-between; align-items:center; padding:5px 0; border-bottom:1px solid #ccc; }
-  .quantity-controls { display:flex; gap:5px; align-items:center; }
-  button { padding:5px 10px; cursor:pointer; }
+  button { cursor:pointer; padding:5px 10px; margin-left:5px; }
   .remove-btn { background:red; color:white; border:none; }
-  .cart-actions { margin-top:20px; display:flex; gap:10px; }
-  .whatsapp-btn { background:#25d366; color:white; border:none; padding:10px 15px; font-size:16px; cursor:pointer; }
+  .qty-btn { background:#25d366; color:white; border:none; }
+  #cartActions { margin-top:20px; }
 </style>
 </head>
 <body>
@@ -20,9 +19,9 @@
 <h2>Your Cart</h2>
 <div id="cart"></div>
 
-<div class="cart-actions">
+<div id="cartActions">
   <button id="clearCart">Clear Cart</button>
-  <button class="whatsapp-btn" id="sendWhatsApp">Send via WhatsApp</button>
+  <button id="sendWhatsApp">Send via WhatsApp</button>
 </div>
 
 <script>
@@ -30,29 +29,32 @@ let cart = JSON.parse(localStorage.getItem('cart')) || [];
 
 function renderCart() {
   const cartDiv = document.getElementById("cart");
-  if (cart.length === 0) {
+  if(cart.length === 0) {
     cartDiv.innerHTML = "<p>Your cart is empty.</p>";
     return;
   }
+
   let total = 0;
   cartDiv.innerHTML = "<ul>";
   cart.forEach((item, index) => {
     total += item.price * item.qty;
-    cartDiv.innerHTML += `<li>
-      ${item.name} - $${item.price} x ${item.qty} = $${item.price*item.qty}
-      <div class="quantity-controls">
-        <button onclick="changeQty(${index}, -1)">-</button>
-        <button onclick="changeQty(${index}, 1)">+</button>
-        <button class="remove-btn" onclick="removeItem(${index})">x</button>
-      </div>
-    </li>`;
+    cartDiv.innerHTML += `
+      <li>
+        <span>${item.name} x ${item.qty} - $${item.price*item.qty}</span>
+        <div>
+          <button class="qty-btn" onclick="changeQty(${index}, 1)">+</button>
+          <button class="qty-btn" onclick="changeQty(${index}, -1)">-</button>
+          <button class="remove-btn" onclick="removeItem(${index})">x</button>
+        </div>
+      </li>
+    `;
   });
   cartDiv.innerHTML += `</ul><p><strong>Total: $${total}</strong></p>`;
 }
 
 function changeQty(index, delta) {
   cart[index].qty += delta;
-  if (cart[index].qty <= 0) {
+  if(cart[index].qty <= 0) {
     cart.splice(index,1);
   }
   localStorage.setItem('cart', JSON.stringify(cart));
@@ -72,13 +74,12 @@ document.getElementById("clearCart").addEventListener("click", () => {
 });
 
 document.getElementById("sendWhatsApp").addEventListener("click", () => {
-  if(cart.length === 0) { alert("Cart is empty!"); return; }
-  let msg = "Hello, I want to order the following items:\\n";
-  cart.forEach(item => { msg += `${item.name} x ${item.qty} = $${item.price*item.qty}\\n`; });
-  let total = cart.reduce((sum,item)=>sum+item.price*item.qty,0);
-  msg += `Total: $${total}`;
-  let whatsappUrl = "https://wa.me/96178783516?text=" + encodeURIComponent(msg);
-  window.open(whatsappUrl,"_blank");
+  if(cart.length === 0) return alert("Cart is empty!");
+  let message = cart.map(item => `${item.name} x ${item.qty} - $${item.price*item.qty}`).join('%0A');
+  let total = cart.reduce((sum,item) => sum + item.price*item.qty,0);
+  message += `%0A%0ATotal: $${total}`;
+  let whatsappURL = "https://wa.me/78783516?text=" + encodeURIComponent(message);
+  window.open(whatsappURL, "_blank");
 });
 
 renderCart();
