@@ -79,7 +79,7 @@ document.getElementById("sendWhatsApp").addEventListener("click", () => {
   let total = cart.reduce((sum,item) => sum + item.price*item.qty,0);
   let message = messageLines.join('%0A') + '%0A%0ATotal: $' + total;
 
-  let whatsappURL = "https://wa.me/78783516?text=" + message;
+  let whatsappURL = "https://wa.me/96178783516?text=" + message;
   window.open(whatsappURL, "_blank");
 });
 
@@ -88,3 +88,4 @@ renderCart();
 
 </body>
 </html>
+
