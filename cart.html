@@ -5,13 +5,21 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Cart</title>
 <style>
-  body { font-family: Arial, sans-serif; max-width: 800px; margin: auto; padding: 20px; }
+  body { font-family: Arial, sans-serif; max-width: 800px; margin: auto; padding: 20px; background:#f9f9f9; }
+  h2 { text-align:center; color:#333; }
   #cart ul { list-style:none; padding:0; }
-  #cart li { display:flex; justify-content:space-between; align-items:center; padding:5px 0; border-bottom:1px solid #ccc; }
-  button { cursor:pointer; padding:5px 10px; margin-left:5px; }
-  .remove-btn { background:red; color:white; border:none; }
-  .qty-btn { background:#25d366; color:white; border:none; }
-  #cartActions { margin-top:20px; }
+  #cart li { display:flex; justify-content:space-between; align-items:center; padding:10px; border-bottom:1px solid #ddd; background:white; border-radius:8px; margin-bottom:10px; }
+  #cart li span { font-weight:500; }
+  button { cursor:pointer; padding:6px 12px; border:none; border-radius:5px; font-size:14px; transition:0.2s; }
+  .remove-btn { background:#e74c3c; color:white; }
+  .remove-btn:hover { background:#c0392b; }
+  .qty-btn { background:#25d366; color:white; margin:0 3px; }
+  .qty-btn:hover { background:#1ebe57; }
+  #clearCart { background:#f39c12; color:white; margin-right:10px; }
+  #clearCart:hover { background:#d68910; }
+  #sendWhatsApp { background:#075e54; color:white; }
+  #sendWhatsApp:hover { background:#0a7d60; }
+  #cartActions { margin-top:20px; text-align:center; }
 </style>
 </head>
 <body>
@@ -30,7 +38,7 @@ let cart = JSON.parse(localStorage.getItem('cart')) || [];
 function renderCart() {
   const cartDiv = document.getElementById("cart");
   if(cart.length === 0) {
-    cartDiv.innerHTML = "<p>Your cart is empty.</p>";
+    cartDiv.innerHTML = "<p style='text-align:center;'>Your cart is empty.</p>";
     return;
   }
 
@@ -49,7 +57,7 @@ function renderCart() {
       </li>
     `;
   });
-  cartDiv.innerHTML += `</ul><p><strong>Total: $${total}</strong></p>`;
+  cartDiv.innerHTML += `</ul><p style="text-align:right; font-weight:bold; margin-top:10px;">Total: $${total}</p>`;
 }
 
 function changeQty(index, delta) {
@@ -79,6 +87,7 @@ document.getElementById("sendWhatsApp").addEventListener("click", () => {
   let total = cart.reduce((sum,item) => sum + item.price*item.qty,0);
   let message = messageLines.join('%0A') + '%0A%0ATotal: $' + total;
 
+  // WhatsApp link (replace with your active WhatsApp number)
   let whatsappURL = "https://wa.me/96178783516?text=" + message;
   window.open(whatsappURL, "_blank");
 });
