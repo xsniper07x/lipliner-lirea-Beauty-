@@ -3,14 +3,14 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Lipgloss Store</title>
+<title>Powder Blush Store</title>
 <style>
   body { font-family: Arial, sans-serif; max-width: 800px; margin: auto; padding: 20px; }
   #products { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 20px; }
   .product-card { border: 1px solid #ccc; padding: 10px; text-align: center; }
   .product-card img { width: 100%; height: auto; }
   button { padding:5px 10px; cursor:pointer; }
-  
+
   /* Floating circular cart button */
   #cartButtonContainer {
     position: fixed;
@@ -42,7 +42,7 @@
 </head>
 <body>
 
-<h2 style="text-align:center;">Lipglosses - $8 each</h2>
+<h2 style="text-align:center;">Powder Blush - $10 each</h2>
 <div id="products"></div>
 
 <!-- Floating Go to Cart button -->
@@ -54,10 +54,9 @@
 
 <script>
 const products = [
-  { name: "Lipgloss Lovely", price: 8, img: "https://lh4.googleusercontent.com/0Tycxl8SskQ5vKbNxaTu5JurMoIDpXmcBxdUUhtCjqnNdnGdXjJBI8_G7q8E5t2l1KKc99ilLvzsejae0AmFNmVNAoRNgMJ9EpMBSaA4yw2T-IB_GB_J1qwnQJPnPsKa3Iak4Vbxf0jRe70iC981pout7fe7s0fSwMHSkCKXk9DGvgTZLNBd4g=w1280" },
-  { name: "Lipgloss Peach Me", price: 8, img: "https://lh5.googleusercontent.com/M7luo6Cn6FpyNQOUJbIBwLdIWXIbEkX_stRuxSzAEVTT7DdCgPLluuj2b0V3Jjrobm9CP1QE5zqwk0HofEIxxp6Gh4vMcYzXOEPV3esddudQkDnGJLkiolJpuVEOOTEUuVsogWl2yycakZeQc9YGCj6DiNUEkFtoqyUdlrIrMjU3-Gyt6G0A3g=w1280" },
-  { name: "Lipgloss Rude Brown", price: 8, img: "https://lh3.googleusercontent.com/KHZV2TdArAwZIMxohST-l5xpql1GFqeojw9xjXq4E0pVvKStIGtb3sZs522uLriarEdvmbpL7KkBDICNAGjGGUHfLBGJgu2jWTHgKzKAW09k1Dv19qFZveOLflhnZwgoutsk6rIpfmeCHjNpAuFSinEb4iMDKHTLvW6AfQKdnaWyhjC_TX6oTg=w1280" },
-  { name: "Lipgloss Lolita", price: 8, img: "https://lh4.googleusercontent.com/_gvGkPD28Xq7HldI0PYEsIHl5ZL3SXrPBu9hNEB13ztk-f2IWrvFcimUT0UHT5a_wFmZHk0qdEH3SB_WN4jyhVmKDdPRe-cH_m3iHLzTAFWyOaZb_PH1JGlkU6-boObxV3FuEFkuWt7u9K05cr9l_HoLCrD37f9Bs0Wq5BOHsouwOqRSOoeRUA=w1280" },
+  { name: "Powder Blush Pink Glow", price: 10, img: "URL_TO_IMAGE_1" },
+  { name: "Powder Blush Coral Charm", price: 10, img: "URL_TO_IMAGE_2" },
+  { name: "Powder Blush Soft Rose", price: 10, img: "URL_TO_IMAGE_3" }
 ];
 
 let cart = JSON.parse(localStorage.getItem('cart')) || [];
