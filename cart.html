@@ -54,9 +54,7 @@ function renderCart() {
 
 function changeQty(index, delta) {
   cart[index].qty += delta;
-  if(cart[index].qty <= 0) {
-    cart.splice(index,1);
-  }
+  if(cart[index].qty <= 0) cart.splice(index,1);
   localStorage.setItem('cart', JSON.stringify(cart));
   renderCart();
 }
@@ -76,13 +74,12 @@ document.getElementById("clearCart").addEventListener("click", () => {
 document.getElementById("sendWhatsApp").addEventListener("click", () => {
   if(cart.length === 0) return alert("Cart is empty!");
 
-  // Build message with actual line breaks
-  let message = cart.map(item => `${item.name} x ${item.qty} - $${item.price*item.qty}`).join('\n');
+  // Encode each line individually, join with %0A for WhatsApp
+  let messageLines = cart.map(item => encodeURIComponent(`${item.name} x ${item.qty} - $${item.price*item.qty}`));
   let total = cart.reduce((sum,item) => sum + item.price*item.qty,0);
-  message += `\n\nTotal: $${total}`;
+  let message = messageLines.join('%0A') + '%0A%0ATotal: $' + total;
 
-  // Encode whole message once
-  let whatsappURL = "https://wa.me/78783516?text=" + encodeURIComponent(message);
+  let whatsappURL = "https://wa.me/78783516?text=" + message;
   window.open(whatsappURL, "_blank");
 });
 
