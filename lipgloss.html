@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Powder Blush Store</title>
+<title>Lip Gloss Store</title>
 <style>
   body { font-family: Arial, sans-serif; max-width: 800px; margin: auto; padding: 20px; }
   #products { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 20px; }
@@ -42,7 +42,7 @@
 </head>
 <body>
 
-<h2 style="text-align:center;">Powder Blush - $10 each</h2>
+<h2 style="text-align:center;">Lip Gloss - $10 each</h2>
 <div id="products"></div>
 
 <!-- Floating Go to Cart button -->
@@ -54,9 +54,10 @@
 
 <script>
 const products = [
-  { name: "Powder Blush Pink Glow", price: 10, img: "URL_TO_IMAGE_1" },
-  { name: "Powder Blush Coral Charm", price: 10, img: "URL_TO_IMAGE_2" },
-  { name: "Powder Blush Soft Rose", price: 10, img: "URL_TO_IMAGE_3" }
+  { name: "Lip Gloss Lolita", price: 10, img: "https://raw.githubusercontent.com/xsniper07x/lipliner-lirea-Beauty-/refs/heads/main/images/lipgloss%20lolita.jfif" },
+  { name: "Lip Gloss Lovely", price: 10, img: "https://raw.githubusercontent.com/xsniper07x/lipliner-lirea-Beauty-/refs/heads/main/images/lipgloss%20lovely.jfif" },
+  { name: "Lip Gloss Peach Me", price: 10, img: "https://raw.githubusercontent.com/xsniper07x/lipliner-lirea-Beauty-/refs/heads/main/images/lipgloss%20peach%20me.jfif" },
+  { name: "Lip Gloss Rude Brown", price: 10, img: "https://raw.githubusercontent.com/xsniper07x/lipliner-lirea-Beauty-/refs/heads/main/images/lipgloss%20rude%20brown.jfif" }
 ];
 
 let cart = JSON.parse(localStorage.getItem('cart')) || [];
