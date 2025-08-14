@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Powder Blush</title>
+<style>
+  body { font-family: Arial, sans-serif; max-width: 800px; margin: auto; padding: 20px; background:#f9f9f9; }
+  h2 { text-align:center; color:#333; }
+  #products { display:grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap:20px; }
+  .product-card { border:1px solid #ddd; border-radius:8px; padding:10px; text-align:center; background:white; }
+  .product-card img { width:100%; border-radius:5px; }
+  .qty-btn { background:#25d366; color:white; border:none; padding:6px 12px; border-radius:5px; margin:0 3px; cursor:pointer; }
+  .qty-btn:hover { background:#1ebe57; }
+  .bottom-button { position:fixed; bottom:20px; right:20px; }
+  .goto-cart { background:#075e54; color:white; border:none; padding:12px 20px; font-size:16px; border-radius:8px; cursor:pointer; box-shadow:0 2px 6px rgba(0,0,0,0.2); }
+  .goto-cart:hover { background:#0a7d60; }
+</style>
+</head>
+<body>
+
+<h2>Powder Blush - $10 each</h2>
+<div id="products"></div>
+
+<div class="bottom-button">
+  <a href="cart.html" style="text-decoration:none;">
+    <button class="goto-cart">Go to Cart</button>
+  </a>
+</div>
+
+<script>
+const products = [
+  { name: "Powder Blush 04 Coral Sunset", price: 10, img: "https://lh5.googleusercontent.com/dGEaq7_ayHsedEma1CVn7PaXQaYQe7B0dlJcaXGeP7AiRutzITFygYfZztw4R4HLkGVxIK9myAdpD1lcwQaXGRc" },
+  { name: "Powder Blush 06 Tipsy Rose", price: 10, img: "https://lh5.googleusercontent.com/xh1Knfm7CdPVoxYP3DE0oHo-zDm43V_ymbUiCtvnzaNhMyE5fpxDEiaR84tU-Acy1Htim8GxD9PSYVCfqvyddTw" },
+  { name: "Powder Blush 07 Sweet Pink", price: 10, img: "https://lh6.googleusercontent.com/njbFbvY1H_O2XFiH6H5J_4Dpm--EJx9SYK9xpLBp2RtI0Er5q4R7jbyv__q9G0U2jAhy6zHauoOUExZK4GZaO8g" },
+];
+
+let cart = JSON.parse(localStorage.getItem('cart')) || [];
+
+function renderProducts() {
+  const productsDiv = document.getElementById("products");
+  productsDiv.innerHTML = "";
+  products.forEach((p,index)=>{
+    let qty = cart.find(item=>item.name===p.name)?.qty||0;
+    productsDiv.innerHTML += `
+      <div class="product-card">
+        <img src="${p.img}" alt="${p.name}">
+        <h4>${p.name}</h4>
+        <p>$${p.price}</p>
+        <div style="display:flex; justify-content:center; align-items:center; margin-top:10px;">
+          <button class="qty-btn" onclick="changeQty(${index}, -1)">-</button>
+          <span id="qty-${index}" style="margin:0 10px;">${qty}</span>
+          <button class="qty-btn" onclick="changeQty(${index}, 1)">+</button>
+        </div>
+      </div>
+    `;
+  });
+}
+
+function changeQty(index, delta) {
+  const product = products[index];
+  let cartItem = cart.find(item=>item.name===product.name);
+  if(!cartItem){
+    if(delta>0) cart.push({...product, qty:1});
+  } else {
+    cartItem.qty += delta;
+    if(cartItem.qty<=0) cart = cart.filter(item=>item.name!==product.name);
+  }
+  localStorage.setItem('cart', JSON.stringify(cart));
+  renderProducts();
+}
+
+renderProducts();
+</script>
+
+</body>
+</html>
