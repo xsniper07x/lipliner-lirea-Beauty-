@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Powder Blush Store</title>
+<style>
+  body { font-family: Arial, sans-serif; max-width: 800px; margin: 0 auto; padding: 20px; }
+  #products { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 20px; }
+  .product-card { border: 1px solid #ccc; padding: 10px; text-align: center; background: #fff; border-radius: 6px; }
+  .product-card img { width: 100%; height: auto; border-radius: 4px; }
+  .qty-controls { display:flex; justify-content:center; gap:10px; align-items:center; margin-top:8px; }
+  .qty-controls button { padding:6px 10px; cursor:pointer; border-radius:4px; border:1px solid #bbb; background:#f5f5f5; }
+  .qty-num { min-width:20px; display:inline-block; text-align:center; }
+
+  /* === Floating circular cart button - EXACT style from Lipstick page === */
+  #cartButtonContainer {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    display: none; /* shown only when cart has >=1 item */
+    z-index: 1000;
+  }
+
+  .floating-cart {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background-color: #25d366;
+    color: white;
+    border: none;
+    font-size: 28px;
+    cursor: pointer;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .floating-cart:hover {
+    background-color: #128c4a;
+  }
+</style>
+</head>
+<body>
+
+<h2 style="text-align:center;">Powder Blush - $10 each</h2>
+<div id="products"></div>
+
+<!-- Floating Go to Cart button: bright green circle with only emoji -->
+<div id="cartButtonContainer">
+  <a href="cart.html" style="text-decoration:none;">
+    <button class="floating-cart" aria-label="Go to cart">🛒</button>
+  </a>
+</div>
+
+<script>
+/* Product list (only names, prices, images differ) */
+const products = [
+  { name: "Powder Blush 04 Coral Sunset", price: 10, img: "https://lh5.googleusercontent.com/dGEaq7_ayHsedEma1CVn7PaXQaYQe7B0dlJcaXGeP7AiRutzITFygYfZztw4R4HLkGVxIK9myAdpD1lcwQaXGRc" },
+  { name: "Powder Blush 06 Tipsy Rose", price: 10, img: "https://lh5.googleusercontent.com/xh1Knfm7CdPVoxYP3DE0oHo-zDm43V_ymbUiCtvnzaNhMyE5fpxDEiaR84tU-Acy1Htim8GxD9PSYVCfqvyddTw" },
+  { name: "Powder Blush 07 Sweet Pink", price: 10, img: "https://lh6.googleusercontent.com/njbFbvY1H_O2XFiH6H5J_4Dpm--EJx9SYK9xpLBp2RtI0Er5q4R7jbyv__q9G0U2jAhy6zHauoOUExZK4GZaO8g" },
+];
+
+/* Shared cart stored in localStorage under key 'cart' */
+let cart = JSON.parse(localStorage.getItem('cart')) || [];
+
+/* Render products grid and quantities */
+function renderProducts() {
+  const productsDiv = document.getElementById("products");
+  productsDiv.innerHTML = "";
+  // Determine if any item exists in cart (from any category)
+  const hasCartItems = cart && cart.length > 0;
+
+  products.forEach((p, index) => {
+    const qty = cart.find(item => item.name === p.name)?.qty || 0;
+    productsDiv.innerHTML += `
+      <div class="product-card">
+        <img src="${p.img}" alt="${p.name}">
+        <h4>${p.name}</h4>
+        <p>$${p.price}</p>
+        <div class="qty-controls">
+          <button onclick="changeQty(${index}, -1)" aria-label="Decrease">-</button>
+          <span class="qty-num" id="qty-${index}">${qty}</span>
+          <button onclick="changeQty(${index}, 1)" aria-label="Increase">+</button>
+        </div>
+      </div>
+    `;
+  });
+
+  // Show the EXACT floating green circular cart button only if cart has items
+  document.getElementById("cartButtonContainer").style.display = hasCartItems ? "block" : "none";
+}
+
+/* Modify cart quantities */
+function changeQty(index, delta) {
+  const product = products[index];
+  let cartItem = cart.find(item => item.name === product.name);
+
+  if (!cartItem) {
+    if (delta > 0) {
+      cart.push({ ...product, qty: 1 });
+    } // if delta negative and item not present -> nothing to do
+  } else {
+    cartItem.qty += delta;
+    if (cartItem.qty <= 0) {
+      cart = cart.filter(item => item.name !== product.name);
+    }
+  }
+
+  localStorage.setItem('cart', JSON.stringify(cart));
+  renderProducts();
+}
+
+/* Initial render */
+renderProducts();
+</script>
+
+</body>
+</html>
